@@ -1,0 +1,13 @@
+Pull Code from GitHub: Jenkins clones or fetches the latest code from the GitHub repository into its workspace (/var/lib/jenkins/workspace/<job_name>).
+
+Execute Build Steps: If it's a Java project, Jenkins compiles it. If it's a simple HTML page, Jenkins just copies the files.
+
+Deployment:
+
+If it's a static website (HTML, CSS, JS), Jenkins copies files to /var/www/html/ (for Apache).
+
+If it's a web application (WAR file), Jenkins moves it to Tomcat’s webapps/ folder.
+
+Permissions & Restart: Jenkins updates file permissions and restarts the required service (Apache or Tomcat).
+
+So, Jenkins never directly modifies files in production locations. It copies them from its workspace to the right place.
