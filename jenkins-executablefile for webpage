@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Enable debugging
+set -e
+
+# Set working directory to Jenkins workspace
+cd $WORKSPACE || exit 1
+
+# Fetch the latest code from GitHub
+echo "Fetching latest code from GitHub..."
+git fetch --all
+git reset --hard origin/main
+git pull origin main
+
+# Install Apache2 if not installed
+if ! command -v apache2 &> /dev/null
+then
+    echo "Apache2 not found, installing..."
+    sudo apt update
+    sudo apt install apache2 -y
+fi
+
+# Remove old files from Apache web root
+echo "Removing old files..."
+sudo rm -rf /var/www/html/*
+
+# Copy files from Jenkins workspace to Apache web root
+echo "Copying new files..."
+sudo cp -r $WORKSPACE/* /var/www/html/
+
+# Set correct permissions
+echo "Setting correct permissions..."
+sudo chmod -R 755 /var/www/html/
+sudo chown -R www-data:www-data /var/www/html/
+
+# Restart Apache to apply changes
+echo "Restarting Apache..."
+sudo systemctl restart apache2
+
+# Confirm file exists
+ls -l /var/www/html/
+cat /var/www/html/index.html
+
+echo "✅ Deployment completed. Access your page at http://54.89.190.26/"
